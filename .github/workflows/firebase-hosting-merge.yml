@@ -6,12 +6,21 @@ on:
   push:
     branches:
       - main
+env:
+  VITE_FIREBASE_API_KEY: "AIzaSyCHcKejwbMysIryIldgOlo6LVJ8bAWV0p4"
+  VITE_FIREBASE_AUTH_DOMAIN: "faviel-registro-virtual.firebaseapp.com"
+  VITE_FIREBASE_PROJECT_ID: "faviel-registro-virtual"
+  VITE_FIREBASE_STORAGE_BUCKET: "faviel-registro-virtual.firebasestorage.app"
+  VITE_FIREBASE_MESSAGING_SENDER_ID: "1063479508041"
+  VITE_FIREBASE_APP_ID: "1:1063479508041:web:ea11f4b5108742698b1398"
+  VITE_FIREBASE_MEASUREMENT_ID: "G-YWX0WDGQJ6"
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: npm ci
+      - run: npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
