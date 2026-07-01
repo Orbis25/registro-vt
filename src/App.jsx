@@ -8,7 +8,6 @@ import {
   updateDoc, 
   deleteDoc 
 } from 'firebase/firestore';
-import { initialSubjects } from './mockData';
 import Dashboard from './components/Dashboard';
 import SubjectDetail from './components/SubjectDetail';
 
@@ -28,18 +27,10 @@ export default function App() {
         list.push({ ...docSnap.data(), id: docSnap.id });
       });
 
-      if (list.length === 0 && loading) {
-        // If Firestore is empty on first load, seed with local mockData
-        console.log("Firestore empty. Seeding database with initialSubjects...");
-        initialSubjects.forEach(async (sub) => {
-          await setDoc(doc(db, 'subjects', sub.id), sub);
-        });
-      } else {
-        // Sort subjects by name alphabetically to keep visual order consistent
-        list.sort((a, b) => a.name.localeCompare(b.name));
-        setSubjects(list);
-        setLoading(false);
-      }
+      // Sort subjects by name alphabetically to keep visual order consistent
+      list.sort((a, b) => a.name.localeCompare(b.name));
+      setSubjects(list);
+      setLoading(false);
     }, (error) => {
       console.error("Firestore onSnapshot subscription error:", error);
       setLoading(false);
@@ -276,25 +267,7 @@ export default function App() {
     }
   };
 
-  const handleResetData = async () => {
-    if (confirm("¿Deseas restablecer todos los datos en Firebase a la configuración inicial predeterminada? Se perderán tus cambios actuales.")) {
-      setLoading(true);
-      try {
-        // Clear all current documents
-        for (const sub of subjects) {
-          await deleteDoc(doc(db, 'subjects', sub.id));
-        }
-        // Add defaults
-        for (const sub of initialSubjects) {
-          await setDoc(doc(db, 'subjects', sub.id), sub);
-        }
-        setSelectedSubjectId(null);
-      } catch (e) {
-        console.error("Error resetting data in Firestore:", e);
-        setLoading(false);
-      }
-    }
-  };
+
 
   // Render Skeleton Loader while fetching data
   if (loading) {
@@ -334,11 +307,6 @@ export default function App() {
         <div className="brand-section">
           <div className="logo-icon">R</div>
           <h1 className="brand-title">Registro Virtual</h1>
-        </div>
-        <div>
-          <button className="btn-secondary" style={{ marginRight: '0.75rem' }} onClick={handleResetData} title="Restablecer datos en Firebase">
-            Restablecer Muestra
-          </button>
         </div>
       </header>
 
